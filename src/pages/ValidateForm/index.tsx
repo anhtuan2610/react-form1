@@ -1,18 +1,57 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { z } from "zod";
 
-type TFormState = {
-  firstName: string;
-  lastName: string;
-  gender: string;
-  dob: string;
-  parentFirstName: string;
-  parentLastName: string;
-  emailAddress: string;
-  pinCode: string;
-  country: string;
-  timeZone: string;
-  phoneNumber: string;
-};
+const schema = z.object({
+  firstName: z
+    .string()
+    .trim()
+    .min(2, "your name must be more than 2 character.")
+    .max(20, "Your name must be less than 20 characters.")
+    .regex(/^[a-z]+$/, "Name can't contain numbers or uppercase letters."),
+  lastName: z
+    .string()
+    .trim()
+    .min(2, "your name must be more than 2 character.")
+    .max(20, "Your name must be less than 20 characters.")
+    .regex(/^[a-z]+$/, "Name can't contain numbers or uppercase letters.")
+    .optional() // sử dụng để un required nó (nếu nhập thì vẫn check) 
+    .or(z.literal("")), // có nghĩa là trường đó có thể là một chuỗi rỗng hoặc không có giá trị (undefined).
+  gender: z.string().min(1, "Gender is required."),
+  dob: z.string().date("Dob is required."),
+  parentFirstName: z
+    .string()
+    .trim()
+    .min(2, "your parent name must be more than 2 character.")
+    .max(20, "Your parent name must be less than 20 characters.")
+    .regex(
+      /^[a-z]+$/,
+      "Parent Name can't contain numbers or uppercase letters."
+    ),
+  parentLastName: z
+    .string()
+    .trim()
+    .min(2, "Your parent name must be more than 2 character.")
+    .max(20, "Your parent name must be less than 20 characters.")
+    .regex(
+      /^[a-z]+$/,
+      "Parent Name can't contain numbers or uppercase letters."
+    )
+    .optional()
+    .or(z.literal("")),
+  emailAddress: z
+    .string()
+    .trim()
+    .min(1, "Email is required")
+    .regex(/^\S+@\S+\.\S+$/, "must follow format example@email.com"),
+  pinCode: z.string().min(6, "at least 6 character"),
+  country: z.string().min(1, "Gender is required."),
+  timeZone: z.string().date("follow format YYYY-MM-DD").optional().or(z.literal("")),
+  // timeZone: z.string().date("follow format dd/MM/yyyy").optional().or(z.literal("")),
+  phoneNumber: z.string().regex(/^\d{8,12}$/, "phone number has 8-12 number")
+});
+
+type TFormState = z.infer<typeof schema>;
 
 export default function ValidateForm() {
   const defaultValues = {
@@ -29,16 +68,6 @@ export default function ValidateForm() {
     phoneNumber: "",
   };
 
-  const Regex = {
-    firstName: /^[a-z]{2,}$/,
-    lastName: /^[a-z]{2,}$/,
-    parentFirstName: /^[a-z]{2,}$/,
-    parentLastName: /^[a-z]{2,}$/,
-    emailAddress: /^\S+@\S+\.\S+$/,
-    pinCode: /^.{6,}$/,
-    phoneNumber: /^\d{8,12}$/,
-  };
-
   // sử dụng register cho các field để đăng ký xây nhà (viết vào input)
   // các field được đăng ký thì sẽ có thể sử dụng các hàm có sẵn của register
 
@@ -48,10 +77,10 @@ export default function ValidateForm() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
-    setError,
+    formState: { errors }, // riêng formState phải khai báo kiểu này
   } = useForm<TFormState>({
     defaultValues,
+    resolver: zodResolver(schema), // kết nối với zod libary
   });
 
   // console.log({
@@ -59,29 +88,7 @@ export default function ValidateForm() {
   // });
 
   const onSubmit = (values: TFormState) => {
-    const fields = Object.keys(values) as Array<keyof TFormState>;
-    let isSuccess = true;
-
-    fields.forEach((field) => {
-      if (!values[field]) {
-        setError(field, { message: `${field} can't empty` });
-        isSuccess = false;
-      }
-    });
-
-    fields.forEach((field) => {
-      const regex = Regex[field as keyof typeof Regex]; // ép kiểu của field sang kiểu của Regex
-      const fieldValue = values[field];
-
-      if (fieldValue && regex && !regex.test(fieldValue)) {
-        setError(field, { message: `${field} is not valid` });
-        isSuccess = false;
-      }
-    });
-      
-    if (isSuccess) {
-      alert("Register Success");
-    }
+    console.log(values);
   };
 
   return (
@@ -141,7 +148,7 @@ export default function ValidateForm() {
                     className="w-[330px] h-[40px] border border-gray-300 rounded-[6px] px-[12px] py-[8px] box-border"
                     type="text"
                     placeholder="Enter your First Name"
-                    {...register("firstName")}
+                    {...register("firstName")} // ... register sẽ tự động thêm các hàm onChange, onBlur, và ref vào input để quản lý
                   />
                   <span id="firstName-error" className="text-red-500">
                     {errors.firstName?.message || ""}
@@ -230,7 +237,7 @@ export default function ValidateForm() {
                   <label>Pin Code*</label>
                   <input
                     id="pinCode"
-                    type="text"
+                    type="password"
                     placeholder="Enter your area's Pin Code"
                     className="w-[330px] h-[40px] border border-gray-300 rounded-[6px] px-[12px] py-[8px] box-border"
                     {...register("pinCode")}
