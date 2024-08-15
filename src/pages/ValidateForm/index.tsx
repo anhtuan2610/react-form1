@@ -2,6 +2,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+// type TFormState = {
+//   firstName: string;
+//   lastName: string;
+//   gender: string;
+//   dob: string;
+//   parentFirstName: string;
+//   parentLastName: string;
+//   emailAddress: string;
+//   pinCode: string;
+//   country: string;
+//   timeZone: string;
+//   phoneNumber: string;
+// };
+
 const schema = z.object({
   firstName: z
     .string()
@@ -68,6 +82,16 @@ export default function ValidateForm() {
     phoneNumber: "",
   };
 
+  // const Regex = {
+  //   firstName: /^[a-z]{2,}$/,
+  //   lastName: /^[a-z]{2,}$/,
+  //   parentFirstName: /^[a-z]{2,}$/,
+  //   parentLastName: /^[a-z]{2,}$/,
+  //   emailAddress: /^\S+@\S+\.\S+$/,
+  //   pinCode: /^.{6,}$/,
+  //   phoneNumber: /^\d{8,12}$/,
+  // };
+
   // sử dụng register cho các field để đăng ký xây nhà (viết vào input)
   // các field được đăng ký thì sẽ có thể sử dụng các hàm có sẵn của register
 
@@ -89,6 +113,29 @@ export default function ValidateForm() {
 
   const onSubmit = (values: TFormState) => {
     console.log(values);
+    // const fields = Object.keys(values) as Array<keyof TFormState>;
+    // let isSuccess = true;
+
+    // fields.forEach((field) => {
+    //   if (!values[field]) {
+    //     setError(field, { message: `${field} can't empty` });
+    //     isSuccess = false;
+    //   }
+    // });
+
+    // fields.forEach((field) => {
+    //   const regex = Regex[field as keyof typeof Regex]; // ép kiểu của field sang kiểu của Regex
+    //   const fieldValue = values[field];
+
+    //   if (fieldValue && regex && !regex.test(fieldValue)) {
+    //     setError(field, { message: `${field} is not valid` });
+    //     isSuccess = false;
+    //   }
+    // });
+
+    // if (isSuccess) {
+    //   alert("Register Success");
+    // }
   };
 
   return (

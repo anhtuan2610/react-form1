@@ -5,6 +5,7 @@ import ProductCreate from "./pages/ProductCreate";
 import ProductEdit from "./pages/ProductEdit";
 import NavBar from "./pages/NavBar";
 import ValidateForm from "./pages/ValidateForm";
+import TestHook from "./pages/CustomHookTest";
 
 export default function AppRouter() {
   return (
@@ -15,8 +16,9 @@ export default function AppRouter() {
         <Route path="/product/create" element={<ProductCreate />} />
         <Route path="/product/:id/edit" element={<ProductEdit />} />
       </Route>
-      <Route path="/" element={<ValidateForm />}></Route>
-      <Route path="/form" element={<ValidateForm />}></Route>
+      {/* <Route path="/" element={<ValidateForm />}></Route>
+      <Route path="/form" element={<ValidateForm />}></Route> */}
+      <Route path="/" element={<TestHook />}></Route>
     </Routes>
   );
 }
