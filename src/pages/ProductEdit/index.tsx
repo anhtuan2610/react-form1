@@ -5,8 +5,11 @@ import {
   getProducts,
   TProductNoId,
 } from "../../services/product-api";
+import { useAppDispatch } from "../../store/hooks";
+import { updateProduct } from "../../store/slides/products";
 
 export default function ProductEdit() {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { id } = useParams<string>();
 
@@ -36,6 +39,7 @@ export default function ProductEdit() {
         description: description,
       };
       await editProduct(Number(id), data);
+      dispatch(updateProduct({id, ...data}));
       navigate("/product");
     } catch (error) {
       console.log(error);

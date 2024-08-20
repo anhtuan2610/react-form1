@@ -11,6 +11,7 @@ export default function AppRouter() {
   return (
     <Routes>
       <Route element={<NavBar />}>
+        <Route path="/" element={<ProductList />} />
         <Route path="/product" element={<ProductList />} />
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/product/create" element={<ProductCreate />} />
@@ -18,7 +19,7 @@ export default function AppRouter() {
       </Route>
       {/* <Route path="/" element={<ValidateForm />}></Route>
       <Route path="/form" element={<ValidateForm />}></Route> */}
-      <Route path="/" element={<TestHook />}></Route>
+      {/* <Route path="/" element={<TestHook />}></Route> */}
     </Routes>
   );
 }

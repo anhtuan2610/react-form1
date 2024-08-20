@@ -2,10 +2,11 @@ import { useState } from "react";
 import { createProduct } from "../../services/product-api";
 import { Product } from "../ProductList";
 import { useNavigate } from "react-router-dom";
-
-type TProductNoId = Omit<Product, "id">;
+import { useAppDispatch } from "../../store/hooks";
+import { addProduct } from "../../store/slides/products";
 
 export default function ProductCreate() {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const [title, setTitle] = useState("");
@@ -13,14 +14,15 @@ export default function ProductCreate() {
   const [description, setDescription] = useState("");
 
   async function handleCreate() {
-    //   console.log({title, price, description});
     try {
-      const newProduct: TProductNoId = {
+      const newProduct: Product = {
+        id: Date.now(),
         title: title,
         price: price,
         description: description,
       };
       await createProduct(newProduct);
+      dispatch(addProduct(newProduct));
       navigate("/product");
     } catch (error) {
       console.log(error);
@@ -32,8 +34,8 @@ export default function ProductCreate() {
       <div className="py-2">
         <label className="pr-2 w-20 inline-block">Title</label>
         <input
-          onChange={(e) => setTitle(e.target.value)} 
-          value={title} 
+          onChange={(e) => setTitle(e.target.value)}
+          value={title}
           className="p-2 border-2 border-red-600"
           type="text"
         />

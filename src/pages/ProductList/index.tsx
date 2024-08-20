@@ -1,6 +1,10 @@
-import { useEffect, useState } from "react";
-import { getProducts } from "../../services/product-api";
+import { useEffect } from "react";
+import { deleteProduct } from "../../services/product-api";
 import { useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../store/hooks/index";
+import { removeProduct } from "../../store/slides/products";
+import DeleteProduct from "../../components/Shop/DeleteProduct";
+import { fetchProduct } from "../../store/thunks/product.thunk";
 
 export type Product = {
   id: number;
@@ -10,30 +14,29 @@ export type Product = {
 };
 
 export default function ProductList() {
-  const [products, setProducts] = useState<Product[]>();
+  const data: Product[] = useAppSelector((state) => state.products.data);
+
+  const dispatch = useAppDispatch();
+
   const navigate = useNavigate();
 
-  async function fetchProducts() {
-    try {
-      const data = await getProducts();
-      setProducts(data);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
   useEffect(() => {
-    fetchProducts();
+    dispatch(fetchProduct());
   }, []);
+
+  function handleDeleteProduct(id: number) {
+    deleteProduct(id);
+    dispatch(removeProduct(id));
+  }
 
   return (
     <div>
-      {products?.map((p) => (
-        <div
-          className="w-1/2 border-2 border-blue-400 p-2 my-2"
-          onClick={() => navigate(`/product/${p.id}`)}
-        >
-          <div>{p.title}</div>
+      {data?.map((p) => (
+        <div className="flex justify-between w-1/2 border-2 border-blue-400 p-2 my-2">
+          <div onClick={() => navigate(`/product/${p.id}`)}>{p.title}</div>
+          <div className="z-10">
+            <DeleteProduct productId={p.id} handleDeleteProduct={handleDeleteProduct} />
+          </div>
         </div>
       ))}
 
